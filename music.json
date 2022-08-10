@@ -1,0 +1,32 @@
+[
+    {
+        "title": "Angels",
+        "artist": "The 69 Eyes",
+        "src": "music/Angels.mp3"
+    },
+    {
+        "title": "Devils",
+        "artist": "The 69 Eyes",
+        "src": "music/Devils.mp3"
+    },
+    {
+        "title": "Heathens",
+        "artist": "Twenty one pilot",
+        "src": "music/Heathens.mp3"
+    },
+    {
+        "title": "Jumpsuit",
+        "artist": "Twenty one pilot",
+        "src": "music/Jumpsuit.mp3"
+    },
+    {
+        "title": "Never Say Die",
+        "artist": "The 69 Eyes",
+        "src": "music/Never_Say_Die.mp3"
+    },
+    {
+        "title": "Sister Of Charity",
+        "artist": "The 69 Eyes",
+        "src": "music/Sister_Of_Charity.mp3"
+    }
+]

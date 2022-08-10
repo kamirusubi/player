@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <title>Document</title>
+</head>
+
+<body>   
+    <div class="player">
+        <div id="title"></div>
+        <div id="artist"></div>
+        <div class="progress-panel">
+            <div id="progress-bar"></div>
+            <div class="time">
+                <div id="current-time"></div>
+                <div id="duration"></div>
+            </div>
+        </div>
+        <div class="manage-panel">
+            <button class="manage-song" id="prev" onclick="prev_track()">
+                <span class="material-symbols-outlined">
+                    skip_previous
+                </span>
+            </button>
+            <button class="manage-song" id="pause" onclick="start()">
+                <span class="material-symbols-outlined">
+                    pause
+                </span>
+            </button>
+            <button class="manage-song" id="next" onclick="next_track()">
+                <span class="material-symbols-outlined ">
+                    skip_previous
+                </span>
+            </button>
+        </div> 
+    </div>
+</body>
+
+
+<script>
+    async function GetMusicArray(src){
+        let response = await fetch(src)
+        let result = await response.json()
+        console.log(result)
+        return result
+    }
+    let title = document.getElementById("title")
+    let artist = document.getElementById("artist")
+    let progress_bar = document.getElementById("progress-bar")
+    let prev = document.getElementById("prev")
+    let pause = document.getElementById("pause")
+    let next = document.getElementById("next")
+    let current_time = document.getElementById("current-time")
+    let duration = document.getElementById("duration")
+    let current_track = 0
+    let been_started = false
+    let music_array = GetMusicArray("music.json")
+    let audio = new Audio()
+    function start(){
+        if(audio.paused & been_started){
+            audio.play()
+            console.log("been started1", been_started)
+        }
+        else{
+            if(been_started){
+                audio.pause()
+                been_started = true
+                console.log("been started2", been_started) 
+            }
+            else{
+                music_array.then(x => {
+                    title.textContent = x[current_track]["title"]
+                    artist.textContent = x[current_track]["artist"]
+                    audio.src = x[current_track]['src']
+                    audio.play()
+                })
+                setTimeout(() => {
+                    duration.textContent = time(audio.duration)
+                    current_time.textContent = time(audio.currentTime)
+                }, 100)
+                setInterval(( ) => {current_time.textContent = time(audio.currentTime)}, 1000)
+                been_started = true
+                console.log("been started3", been_started) 
+            }            
+        }
+    }
+    function time(duration){
+        let mins = Math.floor(duration / 60)
+        let secs = Math.floor(duration - mins*60)
+        let result = (secs < 10) ? (mins + ':0' + secs) : (mins + ':' + secs)
+        return result
+    }
+    function next_track(){   
+        music_array.then(x => {
+            current_track = (current_track < x.length-1) ? (current_track + 1) : 0
+            console.log("current track", current_track+1)            
+        })
+        been_started = false
+        start()
+    }
+    function prev_track(){        
+        music_array.then(x => {
+            current_track = (current_track != 0) ? (current_track - 1) : x.length-1
+            console.log("current track", current_track+1)            
+        })
+        been_started = false
+        been_paused = false
+        start()
+    }
+</script>
+
+
+<style>
+    .material-symbols-outlined {
+        font-variation-settings:
+        'FILL' 0,
+        'wght' 400,
+        'GRAD' 0,
+        'opsz' 48
+    }
+    *{
+        padding: 0;
+        margin: 0;
+    }
+    body{
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        height: 100vh;
+        width: 100vw;
+        background-color: rgb(49, 47, 47);
+    }
+    .player{
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        height: 600px;
+        width: 400px;
+    }
+    .manage-song{
+        background-color: #fff;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 50px;
+        width: 50px;
+    }
+    .manage-song:active{
+        background-color: rgb(250, 183, 183);
+    }
+    .manage-song span{
+        transform: scale(1.5);
+    }
+    #next span{
+        transform: scale(-1.5, 1.5);
+    }
+    .manage-panel{
+        display: flex;
+        gap: 45px;
+        margin-top: 20px;
+    }
+    .progress-panel{
+        width: 80%;
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+        gap: 7px;
+    }
+    .time{
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+        font-size: 24px;
+        color: #fff
+    }
+    #progress-bar{
+        height: 3px;
+        width: 100%;
+        background-color: #fff;
+        margin-top: 30px;
+    }
+    #title{
+        font-size: 36px;
+        color:#fff;
+        width: 100%;
+        text-align: center;;
+    }
+    #artist{
+        font-size: 24px;
+        color:rgb(177, 174, 174);
+        width: 100%;
+        text-align: center;;
+    }
+</style>
+</html>
