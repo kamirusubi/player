@@ -64,29 +64,33 @@
             audio.play()
             console.log("been started1", been_started)
         }
-        else{
-            if(been_started){
-                audio.pause()
-                been_started = true
-                console.log("been started2", been_started) 
-            }
-            else{
-                music_array.then(x => {
-                    title.textContent = x[current_track]["title"]
-                    artist.textContent = x[current_track]["artist"]
-                    audio.src = x[current_track]['src']
-                    audio.play()
-                })
-                setTimeout(() => {
-                    duration.textContent = time(audio.duration)
-                    current_time.textContent = time(audio.currentTime)
-                }, 100)
-                setInterval(( ) => {current_time.textContent = time(audio.currentTime)}, 1000)
-                been_started = true
-                console.log("been started3", been_started) 
-            }            
+        else if(been_started){
+            audio.pause()
+            been_started = true
+            console.log("been started2", been_started) 
         }
+        else{
+            music_array.then(x => {
+                title.textContent = x[current_track]["title"]
+                artist.textContent = x[current_track]["artist"]
+                audio.src = x[current_track]['src']
+                audio.play()
+            })
+            setTimeout(() => {
+                duration.textContent = time(audio.duration)
+                current_time.textContent = time(audio.currentTime)
+            }, 100)
+            setInterval(( ) => {
+                current_time.textContent = time(audio.currentTime)
+                if(audio.ended){
+                    next_track()
+                }
+            }, 1000)
+            been_started = true
+            console.log("been started3", been_started) 
+        }        
     }
+    
     function time(duration){
         let mins = Math.floor(duration / 60)
         let secs = Math.floor(duration - mins*60)
