@@ -13,7 +13,7 @@
         <div id="title"></div>
         <div id="artist"></div>
         <div class="progress-panel">
-            <div id="progress-bar"></div>
+            <input type="range" id="progress-bar" onchange="setTime()">
             <div class="time">
                 <div id="current-time"></div>
                 <div id="duration"></div>
@@ -57,39 +57,46 @@
     let duration = document.getElementById("duration")
     let current_track = 0
     let been_started = false
-    let music_array = GetMusicArray("music.json")
+    // let url = 'http://185.188.182.186:6889/tracks/all'
+    let url = 'music.json'
+    let music_array = GetMusicArray(url)
     let audio = new Audio()
+    let audio_interval
     function start(){
         if(audio.paused & been_started){
             audio.play()
-            console.log("been started1", been_started)
         }
         else if(been_started){
             audio.pause()
             been_started = true
-            console.log("been started2", been_started) 
         }
-        else{
+        else{           
             music_array.then(x => {
                 title.textContent = x[current_track]["title"]
                 artist.textContent = x[current_track]["artist"]
-                audio.src = x[current_track]['src']
+                // audio.src = 'http://185.188.182.186:6889/tracks?id=' + x[current_track]['id']
+                audio.src = x[current_track]['src']                
                 audio.play()
-            })
+            }) 
             setTimeout(() => {
                 duration.textContent = time(audio.duration)
                 current_time.textContent = time(audio.currentTime)
+                progress_bar.value = audio.currentTime
+                progress_bar.min = 0
+                progress_bar.max = audio.duration
+                console.log(progress_bar.max)
             }, 100)
-            setInterval(( ) => {
+            audio_interval = setInterval(() => {
                 current_time.textContent = time(audio.currentTime)
+                progress_bar.value = audio.currentTime
                 if(audio.ended){
                     next_track()
                 }
             }, 1000)
             been_started = true
-            console.log("been started3", been_started) 
         }        
     }
+    
     
     function time(duration){
         let mins = Math.floor(duration / 60)
@@ -103,6 +110,7 @@
             console.log("current track", current_track+1)            
         })
         been_started = false
+        clearInterval(audio_interval)
         start()
     }
     function prev_track(){        
@@ -111,8 +119,11 @@
             console.log("current track", current_track+1)            
         })
         been_started = false
-        been_paused = false
+        clearInterval(audio_interval)
         start()
+    }
+    function setTime(){
+        audio.currentTime = progress_bar.value
     }
 </script>
 
@@ -143,8 +154,8 @@
         align-items: center;
         justify-content: center;
         flex-direction: column;
-        height: 600px;
-        width: 400px;
+        height: 400px;
+        width: 300px;
     }
     .manage-song{
         background-color: #fff;
@@ -152,8 +163,8 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        height: 50px;
-        width: 50px;
+        height: 40px;
+        width: 40px;
     }
     .manage-song:active{
         background-color: rgb(250, 183, 183);
@@ -184,9 +195,7 @@
         color: #fff
     }
     #progress-bar{
-        height: 3px;
         width: 100%;
-        background-color: #fff;
         margin-top: 30px;
     }
     #title{
@@ -200,6 +209,44 @@
         color:rgb(177, 174, 174);
         width: 100%;
         text-align: center;;
+    }
+    button{
+        border: none;
+    }
+
+
+
+    input[type="range"] {
+        -webkit-appearance: none;
+        cursor: pointer;
+        border-color: #ffffff;
+    }
+    input[type="range"]::-webkit-slider-runnable-track {
+        background: #ffffff;
+        height: 4px;
+        border-radius: 2px;
+    }
+    input[type="range"]::-moz-range-track {
+        background: #ffffff;
+        height: 4px;
+        border-radius: 2px;
+    }
+    input[type="range"]::-webkit-slider-thumb {
+        margin-top: -4px;
+        -webkit-appearance: none;
+        appearance: none;
+        background: #ff0000;
+        height: 12px;
+        width: 12px;
+        border-radius: 50%;
+    }
+    input[type="range"]::-moz-range-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        background: #ff0000;
+        height: 12px;
+        width: 12px;
+        border-radius: 50%;
     }
 </style>
 </html>
